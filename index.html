@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>🌈 User's Nyan Linktree | Retro Pixel Art Link Collection 🐱</title>
+    <meta name="description" content="Der ultimative Retro-Linktree im Nyan Cat Stil! Pixelig, animiert und voller Easter Eggs. Folge @User auf allen Plattformen! 🌈🐱">
+    <meta name="keywords" content="User, Linktree, Nyan Cat, Retro, Pixel Art, Social Media, Links, Profile, 8-bit, Rainbow">
+    <meta name="author" content="User">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#002654">
+    <meta name="color-scheme" content="dark">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="profile-pixel.svg">
+    <link rel="icon" type="image/png" href="profile_picture.png">
+    <link rel="apple-touch-icon" href="profile_picture.png">
+    
+    <!-- Preload wichtige Ressourcen -->
+    <link rel="preload" href="nyan-cat.gif" as="image">
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="script.js" as="script">
+    
+    <!-- DNS Prefetch für externe Ressourcen -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "User",
+      "alternateName": "@User",
+      "description": "Nyan Cat Lover, Pixel Art Enthusiast",
+      "image": "https://User.github.io/nyan-linktree/profile_picture.png",
+      "url": "https://User.github.io/nyan-linktree/",
+      "sameAs": [
+        "https://instagram.com/User",
+        "https://twitter.com/User",
+        "https://youtube.com/@User",
+        "https://twitch.tv/User",
+        "https://tiktok.com/@User"
+      ],
+      "knowsAbout": ["Pixel Art", "Nyan Cat", "Retro Gaming", "8-bit Art"],
+      "jobTitle": "Content Creator"
+    }
+    </script>
+</head>
+<body>
+    <div class="rainbow-bg"></div>
+    
+    <div class="container">
+        <!-- Header Spacer -->
+        <div class="nyan-header"></div>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="avatar">
+                <div class="pixel-border"></div>
+                <img src="profile_picture.png" alt="Pixel Avatar" class="profile-img">
+            </div>
+            <h1 class="username">@User</h1>
+            <p class="bio">🌈 Nyan Cat Lover 🐱 Pixel Art Enthusiast ⭐</p>
+        </div>
+
+        <!-- Links Container -->
+        <div class="links-container">
+            <a href="#" class="link-button instagram" data-platform="instagram">
+                <span class="icon">📸</span>
+                <span class="text">Instagram</span>
+                <div class="sparkles"></div>
+            </a>
+
+            <a href="#" class="link-button twitter" data-platform="twitter">
+                <span class="icon">🐦</span>
+                <span class="text">Twitter</span>
+                <div class="sparkles"></div>
+            </a>
+
+            <a href="#" class="link-button youtube" data-platform="youtube">
+                <span class="icon">📺</span>
+                <span class="text">YouTube</span>
+                <div class="sparkles"></div>
+            </a>
+
+            <a href="#" class="link-button twitch" data-platform="twitch">
+                <span class="icon">🎮</span>
+                <span class="text">Twitch</span>
+                <div class="sparkles"></div>
+            </a>
+
+            <a href="#" class="link-button tiktok" data-platform="tiktok">
+                <span class="icon">🎵</span>
+                <span class="text">TikTok</span>
+                <div class="sparkles"></div>
+            </a>
+
+            <a href="#" class="link-button discord" data-platform="discord">
+                <span class="icon">💬</span>
+                <span class="text">Discord</span>
+                <div class="sparkles"></div>
+            </a>
+
+            <a href="#" class="link-button website" data-platform="website">
+                <span class="icon">🌐</span>
+                <span class="text">Website</span>
+                <div class="sparkles"></div>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Made with 💖 and lots of ☕ | Nyan Nyan! 🌈</p>
+        </div>
+    </div>
+
+    <!-- Floating Stars -->
+    <div class="stars"></div>
+
+    <!-- Easter Egg Game Overlay -->
+    <div id="gameOverlay" class="game-overlay hidden">
+        <div class="game-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            <div class="game-ui">
+                <div class="game-header">
+                    <h2>🌈 NYAN CAT RAINBOW COLLECTOR 🐱</h2>
+                    <div class="game-stats">
+                        <span id="gameScore">Score: 0</span>
+                        <span id="gameLevel">Level: 1</span>
+                        <span id="gameLives">Lives: 3</span>
+                    </div>
+                </div>
+                <div class="game-controls">
+                    <p>🎮 Verwende WASD oder Pfeiltasten zum Bewegen!</p>
+                    <p>⭐ Sammle die Rainbow-Stars und weiche den Hindernissen aus!</p>
+                    <div class="control-toggle">
+                        <button id="controlToggle" class="game-btn toggle-btn">🖱️ Maussteuerung</button>
+                    </div>
+                </div>
+                <div class="game-buttons">
+                    <button id="pauseBtn" class="game-btn">Pause</button>
+                    <button id="closeGameBtn" class="game-btn close-btn">Schließen</button>
+                </div>
+            </div>
+        </div>
+        <div id="gameOverScreen" class="game-over-screen hidden">
+            <div class="game-over-content">
+                <h2>🎮 GAME OVER! 🎮</h2>
+                <p id="finalScore">Final Score: 0</p>
+                <p>Du hast Level <span id="finalLevel">1</span> erreicht!</p>
+                <div class="game-over-buttons">
+                    <button id="restartBtn" class="game-btn">Nochmal spielen</button>
+                    <button id="closeGameOverBtn" class="game-btn close-btn">Zurück</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
