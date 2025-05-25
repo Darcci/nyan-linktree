@@ -1,0 +1,22 @@
+{
+  "name": "User's Nyan Linktree",
+  "short_name": "Nyan Linktree",
+  "description": "Der ultimative Retro-Linktree im Nyan Cat Stil! Pixelig, animiert und voller Easter Eggs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#002654",
+  "theme_color": "#002654",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "profile_picture.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "social", "games"],
+  "lang": "de",
+  "scope": "/",
+  "prefer_related_applications": false
+} 
