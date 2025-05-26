@@ -132,7 +132,7 @@ function initTouchControls() {
             game.keys['ArrowDown'] = normalizedY > 0.2;
 
             // Debug output
-            console.log(`🕹️ Joystick: X=${normalizedX.toFixed(2)}, Y=${normalizedY.toFixed(2)}, Keys: ${Object.keys(game.keys).filter(k => game.keys[k]).join(',')}`);
+            nyanDebug.log('PLAYER', 'VERBOSE', `Joystick: X=${normalizedX.toFixed(2)}, Y=${normalizedY.toFixed(2)}, Keys: ${Object.keys(game.keys).filter(k => game.keys[k]).join(',')}`);
         } else {
             // Reset all movement keys when in deadzone
             game.keys['KeyA'] = false;
@@ -206,13 +206,13 @@ function initTouchControls() {
             game.keys['ArrowDown'] = false;
         }
 
-        console.log('🕹️ Joystick reset');
+        nyanDebug.log('PLAYER', 'INFO', 'Joystick reset');
     }
 
     // Sensitivity adjustment functions
     window.adjustJoystickSensitivity = function (newSensitivity) {
         sensitivity = Math.max(0.5, Math.min(3.0, newSensitivity));
-        console.log(`🕹️ Joystick Sensitivity: ${sensitivity}`);
+        nyanDebug.log('PLAYER', 'INFO', `Joystick Sensitivity: ${sensitivity}`);
     };
 
     // Initialize joystick center
@@ -238,7 +238,7 @@ function initTouchControls() {
             game.controlMode = 'keyboard';
         }
 
-        console.log('🕹️ Joystick drag started');
+        nyanDebug.log('PLAYER', 'INFO', 'Joystick drag started');
     }, { passive: false });
 
     joystickBase.addEventListener('touchmove', (e) => {
@@ -280,7 +280,7 @@ function initTouchControls() {
             game.controlMode = 'keyboard';
         }
 
-        console.log('🕹️ Joystick drag started (mouse)');
+        nyanDebug.log('PLAYER', 'INFO', 'Joystick drag started (mouse)');
     });
 
     document.addEventListener('mousemove', (e) => {
@@ -307,7 +307,7 @@ function initTouchControls() {
         resetJoystick();
     });
 
-    console.log('🕹️ Joystick initialized with sensitivity:', sensitivity);
+    nyanDebug.log('PLAYER', 'INFO', 'Joystick initialized with sensitivity:', sensitivity);
 }
 
 // Sparkles Burst Effekt
@@ -642,8 +642,374 @@ console.log(`
     
     
     
-    Made with 💖 by User & Flimanda - Nyaa~
+    Made with 💖 by Darcci & Flimanda - Nyaa~
 `);
+
+// ==================== CHEAT COMMANDS ====================
+// Geheime Cheat-Commands für Debugging
+
+window.nyanCheats = {
+    // God Mode - Unverwundbarkeit
+    godMode: function (enable = true) {
+        if (!game.isRunning) {
+            console.log('❌ Spiel muss laufen für Cheats!');
+            return;
+        }
+        game.godMode = enable;
+        console.log(enable ? '🛡️ GOD MODE AKTIVIERT! Du bist unverwundbar!' : '💀 God Mode deaktiviert');
+        return enable ? 'God Mode ON' : 'God Mode OFF';
+    },
+
+    // Level direkt setzen
+    setLevel: function (level) {
+        if (!game.isRunning) {
+            console.log('❌ Spiel muss laufen für Cheats!');
+            return;
+        }
+        const oldLevel = game.level;
+        game.level = Math.max(1, Math.min(999, level));
+        game.player.speed = Math.min(12, 5 + game.level * 0.3);
+        updateUI();
+        console.log(`🚀 Level von ${oldLevel} auf ${game.level} gesetzt!`);
+        return `Level: ${game.level}`;
+    },
+
+    // Score hinzufügen
+    addScore: function (points = 1000) {
+        if (!game.isRunning) {
+            console.log('❌ Spiel muss laufen für Cheats!');
+            return;
+        }
+        game.score += points;
+        updateUI();
+        console.log(`💰 ${points} Punkte hinzugefügt! Neuer Score: ${game.score}`);
+        return `Score: ${game.score}`;
+    },
+
+    // Player-Geschwindigkeit ändern
+    setSpeed: function (speed = 10) {
+        if (!game.isRunning) {
+            console.log('❌ Spiel muss laufen für Cheats!');
+            return;
+        }
+        game.player.speed = Math.max(1, Math.min(20, speed));
+        console.log(`⚡ Player-Geschwindigkeit auf ${game.player.speed} gesetzt!`);
+        return `Speed: ${game.player.speed}`;
+    },
+
+    // Laser komplett deaktivieren
+    disableLasers: function (disable = true) {
+        game.lasersDisabled = disable;
+        if (disable) {
+            // Alle aktiven Laser entfernen
+            game.lasers = [];
+            game.laserWarnings = [];
+        }
+        nyanDebug.log('CHEAT', 'INFO', disable ? 'LASER DEAKTIVIERT! Keine Laser mehr!' : 'Laser wieder aktiviert');
+        return disable ? 'Lasers OFF' : 'Lasers ON';
+    },
+
+    // Star Rain - viele Sterne spawnen
+    starRain: function (count = 20) {
+        if (!game.isRunning) {
+            console.log('❌ Spiel muss laufen für Cheats!');
+            return;
+        }
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => spawnStar(), i * 100);
+        }
+        console.log(`⭐ STAR RAIN! ${count} Sterne gespawnt!`);
+        return `${count} stars spawned`;
+    },
+
+    // Bildschirm leeren
+    clearScreen: function () {
+        if (!game.isRunning) {
+            console.log('❌ Spiel muss laufen für Cheats!');
+            return;
+        }
+        game.obstacles = [];
+        game.lasers = [];
+        game.laserWarnings = [];
+        console.log('🧹 Bildschirm geleert! Alle Hindernisse entfernt!');
+        return 'Screen cleared';
+    },
+
+    // Leben hinzufügen
+    addLives: function (lives = 1) {
+        if (!game.isRunning) {
+            console.log('❌ Spiel muss laufen für Cheats!');
+            return;
+        }
+        game.lives += lives;
+        updateUI();
+        console.log(`❤️ ${lives} Leben hinzugefügt! Leben: ${game.lives}`);
+        return `Lives: ${game.lives}`;
+    },
+
+    // Teleport Player
+    teleport: function (x = 100, y = 300) {
+        if (!game.isRunning) {
+            console.log('❌ Spiel muss laufen für Cheats!');
+            return;
+        }
+        game.player.x = Math.max(0, Math.min(game.canvas.width - game.player.width, x));
+        game.player.y = Math.max(0, Math.min(game.canvas.height - game.player.height, y));
+        console.log(`🌀 Player teleportiert zu (${game.player.x}, ${game.player.y})!`);
+        return `Position: (${game.player.x}, ${game.player.y})`;
+    },
+
+    // Alle Cheats anzeigen
+    help: function () {
+        console.log(`
+🌈 ===== NYAN CAT CHEAT COMMANDS ===== 🌈
+
+🛡️  nyanCheats.godMode(true/false)     - Unverwundbarkeit
+🚀  nyanCheats.setLevel(40)            - Level setzen
+💰  nyanCheats.addScore(5000)          - Punkte hinzufügen  
+⚡  nyanCheats.setSpeed(15)            - Geschwindigkeit ändern
+🚫  nyanCheats.disableLasers(true)     - Laser deaktivieren
+⭐  nyanCheats.starRain(30)            - Sterne-Regen
+🧹  nyanCheats.clearScreen()           - Bildschirm leeren
+❤️  nyanCheats.addLives(5)             - Leben hinzufügen
+🌀  nyanCheats.teleport(200, 100)      - Player teleportieren
+🧪  testCheats()                       - Cheat-System testen
+
+KURZE ALIASE:
+⚡  god()                              - God Mode AN
+⚡  ungod()                            - God Mode AUS  
+⚡  lvl(50)                            - Level setzen
+⚡  cheat.help()                       - Diese Hilfe
+
+Beispiel: nyanCheats.godMode(true)
+Nyaa~ Viel Spaß beim Schummeln, Darcci! 😈
+        `);
+        return 'Cheat commands listed in console';
+    },
+
+    // Status anzeigen
+    status: function () {
+        if (!game) {
+            console.log('❌ Game object nicht gefunden!');
+            return 'Game not found';
+        }
+
+        console.log(`
+🎮 ===== GAME STATUS ===== 🎮
+Running: ${game.isRunning}
+Level: ${game.level}
+Score: ${game.score}
+Lives: ${game.lives}
+God Mode: ${game.godMode || false}
+Lasers Disabled: ${game.lasersDisabled || false}
+Player Speed: ${game.player ? game.player.speed : 'N/A'}
+Player Position: (${game.player ? game.player.x : 'N/A'}, ${game.player ? game.player.y : 'N/A'})
+        `);
+        return 'Status displayed in console';
+    },
+
+    // Force-Start für Testing
+    forceStart: function () {
+        console.log('🚀 Force-Starting Game für Cheat-Testing...');
+        if (typeof activateEasterEggGame === 'function') {
+            activateEasterEggGame();
+            return 'Game overlay activated';
+        } else {
+            console.log('❌ activateEasterEggGame function not found');
+            return 'Failed to start game';
+        }
+    }
+};
+
+// Kurze Aliase
+window.cheat = window.nyanCheats;
+window.god = () => nyanCheats.godMode(true);
+window.ungod = () => nyanCheats.godMode(false);
+window.lvl = (level) => nyanCheats.setLevel(level);
+
+// ==================== DEBUG SYSTEM ====================
+// Sauberes Debug-System ohne Console-Spam
+
+window.nyanDebug = {
+    enabled: false,
+    level: 'INFO', // ERROR, WARN, INFO, VERBOSE
+    categories: {
+        GAME: true,
+        LASER: true,
+        COLLISION: true,
+        CHEAT: true,
+        PLAYER: false,
+        PARTICLES: false
+    },
+
+    // Debug-Level Prioritäten
+    levels: {
+        'ERROR': 0,
+        'WARN': 1,
+        'INFO': 2,
+        'VERBOSE': 3
+    },
+
+    // Debug-Nachricht ausgeben
+    log: function (category, level, message, ...args) {
+        if (!this.enabled) return;
+        if (!this.categories[category]) return;
+        if (this.levels[level] > this.levels[this.level]) return;
+
+        const emoji = {
+            'ERROR': '❌',
+            'WARN': '⚠️',
+            'INFO': 'ℹ️',
+            'VERBOSE': '🔍'
+        };
+
+        console.log(`${emoji[level]} [${category}] ${message}`, ...args);
+    },
+
+    // Debug aktivieren/deaktivieren
+    toggle: function (enabled = !this.enabled) {
+        this.enabled = enabled;
+        console.log(enabled ? '🔧 DEBUG AKTIVIERT!' : '🔇 DEBUG DEAKTIVIERT!');
+        return enabled ? 'Debug ON' : 'Debug OFF';
+    },
+
+    // Debug-Level setzen
+    setLevel: function (level) {
+        if (!this.levels.hasOwnProperty(level)) {
+            console.log('❌ Ungültiger Level! Verfügbar: ERROR, WARN, INFO, VERBOSE');
+            return;
+        }
+        this.level = level;
+        console.log(`🔧 Debug-Level auf ${level} gesetzt!`);
+        return `Debug Level: ${level}`;
+    },
+
+    // Kategorie an/ausschalten
+    setCategory: function (category, enabled = true) {
+        if (!this.categories.hasOwnProperty(category)) {
+            console.log('❌ Ungültige Kategorie! Verfügbar:', Object.keys(this.categories).join(', '));
+            return;
+        }
+        this.categories[category] = enabled;
+        console.log(`🔧 Debug-Kategorie ${category}: ${enabled ? 'AN' : 'AUS'}`);
+        return `${category}: ${enabled ? 'ON' : 'OFF'}`;
+    },
+
+    // Status anzeigen
+    status: function () {
+        console.log(`
+🔧 ===== DEBUG STATUS ===== 🔧
+Enabled: ${this.enabled}
+Level: ${this.level}
+Categories:
+${Object.entries(this.categories).map(([cat, enabled]) =>
+            `  ${enabled ? '✅' : '❌'} ${cat}`).join('\n')}
+        `);
+        return 'Debug status displayed';
+    },
+
+    // Hilfe anzeigen
+    help: function () {
+        console.log(`
+🔧 ===== DEBUG COMMANDS ===== 🔧
+
+🔄  nyanDebug.toggle()                 - Debug an/aus
+📊  nyanDebug.setLevel('VERBOSE')      - Level setzen
+📂  nyanDebug.setCategory('LASER', true) - Kategorie an/aus
+📋  nyanDebug.status()                 - Status anzeigen
+🧹  nyanDebug.clear()                  - Console leeren
+
+LEVEL: ERROR < WARN < INFO < VERBOSE
+KATEGORIEN: GAME, LASER, COLLISION, CHEAT, PLAYER, PARTICLES
+
+Beispiel: nyanDebug.toggle(true)
+        `);
+        return 'Debug help displayed';
+    },
+
+    // Console leeren
+    clear: function () {
+        console.clear();
+        console.log('🧹 Console geleert!');
+        return 'Console cleared';
+    }
+};
+
+// Kurze Aliase für Debug
+window.debug = window.nyanDebug;
+window.dbg = (category, message, ...args) => nyanDebug.log(category, 'INFO', message, ...args);
+
+// Praktische Debug-Shortcuts mit Fallback
+window.debugOn = () => {
+    if (window.nyanDebug && typeof window.nyanDebug.toggle === 'function') {
+        return window.nyanDebug.toggle(true);
+    } else {
+        console.log('❌ Debug-System nicht verfügbar! Lade die Seite neu.');
+        return 'Debug system not available';
+    }
+};
+
+window.debugOff = () => {
+    if (window.nyanDebug && typeof window.nyanDebug.toggle === 'function') {
+        return window.nyanDebug.toggle(false);
+    } else {
+        console.log('❌ Debug-System nicht verfügbar! Lade die Seite neu.');
+        return 'Debug system not available';
+    }
+};
+
+window.debugVerbose = () => {
+    if (window.nyanDebug && typeof window.nyanDebug.setLevel === 'function') {
+        return window.nyanDebug.setLevel('VERBOSE');
+    } else {
+        console.log('❌ Debug-System nicht verfügbar! Lade die Seite neu.');
+        return 'Debug system not available';
+    }
+};
+
+window.debugQuiet = () => {
+    if (window.nyanDebug && typeof window.nyanDebug.setLevel === 'function') {
+        return window.nyanDebug.setLevel('ERROR');
+    } else {
+        console.log('❌ Debug-System nicht verfügbar! Lade die Seite neu.');
+        return 'Debug system not available';
+    }
+};
+
+// Debug-Ausgabe für Cheat-System (nur einmal beim Laden)
+console.log('🎮 Nyan Linktree geladen! Tippe "nyanCheats.help()" für Cheats!');
+console.log('🔧 Debug-System geladen! Tippe "nyanDebug.help()" für Debug-Commands!');
+
+// Debug-System Test
+console.log('🔧 Debug-Test: nyanDebug =', typeof window.nyanDebug);
+console.log('🔧 Debug-Test: nyanDebug.toggle =', typeof window.nyanDebug?.toggle);
+
+// Test-Funktion um zu prüfen ob Cheats funktionieren
+window.testCheats = function () {
+    console.log('🧪 Testing Cheat System...');
+    console.log('Game object exists:', typeof game !== 'undefined');
+    console.log('Game is running:', game ? game.isRunning : 'game undefined');
+    console.log('nyanCheats object:', typeof nyanCheats !== 'undefined');
+    console.log('Available cheat functions:', Object.keys(nyanCheats || {}));
+    return 'Test complete - check console output';
+};
+
+// Debug-System Test-Funktion
+window.testDebug = function () {
+    console.log('🔧 Testing Debug System...');
+    console.log('nyanDebug exists:', typeof window.nyanDebug !== 'undefined');
+    console.log('nyanDebug.toggle exists:', typeof window.nyanDebug?.toggle);
+    console.log('debugOn exists:', typeof window.debugOn);
+    console.log('debugOff exists:', typeof window.debugOff);
+
+    if (typeof window.nyanDebug !== 'undefined' && typeof window.nyanDebug.toggle === 'function') {
+        console.log('✅ Debug-System funktioniert!');
+        console.log('Versuche: debugOn() oder nyanDebug.toggle(true)');
+    } else {
+        console.log('❌ Debug-System hat Probleme!');
+    }
+    return 'Debug test complete';
+};
 
 // ==================== EASTER EGG GAME ====================
 
@@ -672,6 +1038,8 @@ let game = {
     stars: [],
     obstacles: [],
     particles: [],
+    laserWarnings: [], // Neue Laser-Warnungen
+    lasers: [], // Aktive Laser
     keys: {},
     lastTime: 0
 };
@@ -727,7 +1095,7 @@ function initEasterEggGame() {
 
     // Start-Screen Controls
     startGameBtn.addEventListener('click', function () {
-        console.log('🎮 Start-Button geklickt!');
+        nyanDebug.log('GAME', 'INFO', 'Start-Button geklickt!');
         hideStartScreenAndStartGame();
     });
 
@@ -742,15 +1110,15 @@ function initEasterEggGame() {
             // Mobile: Touch -> Joystick (Keyboard) -> Touch
             if (game.controlMode === 'touch') {
                 game.controlMode = 'keyboard'; // Joystick Mode
-                console.log('🕹️ Switched to Joystick mode');
+                nyanDebug.log('GAME', 'INFO', 'Switched to Joystick mode');
             } else {
                 game.controlMode = 'touch';   // Canvas Touch Mode
-                console.log('👆 Switched to Touch mode');
+                nyanDebug.log('GAME', 'INFO', 'Switched to Touch mode');
             }
         } else {
             // Desktop: Keyboard -> Mouse -> Keyboard
             game.controlMode = game.controlMode === 'keyboard' ? 'mouse' : 'keyboard';
-            console.log('🖥️ Switched to', game.controlMode, 'mode');
+            nyanDebug.log('GAME', 'INFO', 'Switched to', game.controlMode, 'mode');
         }
         updateControlToggle();
     });
@@ -799,7 +1167,7 @@ function initEasterEggGame() {
         updateControlToggle();
     }
 
-    console.log('🎮 Easter Egg Game initialisiert! Klicke 5x auf das Profil-Bild!');
+    nyanDebug.log('GAME', 'INFO', 'Easter Egg Game initialisiert! Klicke 5x auf das Profil-Bild!');
 }
 
 function createFloatingHint(element, text) {
@@ -870,7 +1238,7 @@ function hideStartScreenAndStartGame() {
     // Jetzt erst das echte Spiel starten
     startGame();
 
-    console.log('🎮 Spiel gestartet vom Start-Screen');
+    nyanDebug.log('GAME', 'INFO', 'Spiel gestartet vom Start-Screen');
 }
 
 function createMegaSparklesBurst(element) {
@@ -931,7 +1299,7 @@ function startGame() {
     updateUI();
     gameLoop();
 
-    console.log('🎮 Nyan Cat Rainbow Collector gestartet!');
+    nyanDebug.log('GAME', 'INFO', 'Nyan Cat Rainbow Collector gestartet!');
 }
 
 function resetGame() {
@@ -949,6 +1317,8 @@ function resetGame() {
     game.stars = [];
     game.obstacles = [];
     game.particles = [];
+    game.laserWarnings = [];
+    game.lasers = [];
     game.keys = {};
 
     document.getElementById('gameOverScreen').classList.add('hidden');
@@ -982,9 +1352,16 @@ function update(deltaTime) {
         spawnObstacle();
     }
 
+    // Spawn Laser Warnings (nur ab Level 40 und wenn nicht deaktiviert!)
+    if (game.level >= 40 && !game.lasersDisabled && Math.random() < 0.003 + ((game.level - 40) * 0.001)) {
+        spawnLaserWarning();
+    }
+
     // Update Game Objects
     updateStars();
     updateObstacles();
+    updateLaserWarnings();
+    updateLasers();
     updateParticles();
 
     // Collision Detection
@@ -1050,6 +1427,76 @@ function spawnObstacle() {
     });
 }
 
+// Laser Warning System
+function spawnLaserWarning() {
+    // Nur horizontale Laser
+    const y = Math.random() * (game.canvas.height - 60) + 30;
+    game.laserWarnings.push({
+        type: 'horizontal',
+        x: 0,
+        y: y,
+        width: game.canvas.width,
+        height: 12, // Etwas dicker für bessere Sichtbarkeit
+        warningTime: 120, // 2 Sekunden bei 60fps
+        maxWarningTime: 120,
+        blinkPhase: 0
+    });
+    nyanDebug.log('LASER', 'INFO', 'LASER WARNING: Level ' + game.level + ' - Horizontaler Laser bei Y=' + Math.round(y));
+}
+
+function updateLaserWarnings() {
+    for (let i = game.laserWarnings.length - 1; i >= 0; i--) {
+        const warning = game.laserWarnings[i];
+        warning.warningTime--;
+        warning.blinkPhase += 0.3; // Blink-Geschwindigkeit
+
+        // Wenn Warnung abgelaufen ist, spawne den echten Laser
+        if (warning.warningTime <= 0) {
+            spawnLaser(warning);
+            game.laserWarnings.splice(i, 1);
+        }
+    }
+}
+
+function spawnLaser(warning) {
+    // Nur horizontale Laser die 2 Sekunden bleiben
+    game.lasers.push({
+        type: 'horizontal',
+        x: 0, // Volle Breite
+        y: warning.y,
+        width: game.canvas.width, // Komplette Bildschirmbreite
+        height: warning.height,
+        speed: 0, // Laser bewegt sich nicht!
+        life: 120, // 2 Sekunden Lebensdauer (bei 60fps)
+        maxLife: 120,
+        intensity: 1.0
+    });
+    nyanDebug.log('LASER', 'INFO', 'LASER FIRED: Level ' + game.level + ' - Horizontaler Laser aktiviert für 2 Sekunden!');
+}
+
+function updateLasers() {
+    for (let i = game.lasers.length - 1; i >= 0; i--) {
+        const laser = game.lasers[i];
+        laser.life--;
+
+        // Laser bewegt sich nicht mehr - bleibt einfach stehen
+        // Nur Lebensdauer wird reduziert
+
+        // Fade out in den letzten 30 Frames (0.5 Sekunden)
+        if (laser.life <= 30) {
+            laser.intensity = laser.life / 30;
+        } else {
+            laser.intensity = 1.0; // Volle Intensität für die meiste Zeit
+        }
+
+        // Entferne wenn Lebensdauer abgelaufen
+        if (laser.life <= 0) {
+            game.lasers.splice(i, 1);
+            nyanDebug.log('LASER', 'INFO', 'LASER DEACTIVATED: Laser verschwunden!');
+        }
+    }
+}
+
 function updateStars() {
     for (let i = game.stars.length - 1; i >= 0; i--) {
         const star = game.stars[i];
@@ -1100,18 +1547,42 @@ function checkCollisions() {
         }
     }
 
-    // Obstacle Collision
-    for (let i = game.obstacles.length - 1; i >= 0; i--) {
-        const obstacle = game.obstacles[i];
-        if (isColliding(player, obstacle)) {
-            game.obstacles.splice(i, 1);
-            game.lives--;
-            createExplosionParticles(player.x + player.width / 2, player.y + player.height / 2);
+    // Obstacle Collision (außer im God Mode)
+    if (!game.godMode) {
+        for (let i = game.obstacles.length - 1; i >= 0; i--) {
+            const obstacle = game.obstacles[i];
+            if (isColliding(player, obstacle)) {
+                game.obstacles.splice(i, 1);
+                game.lives--;
+                createExplosionParticles(player.x + player.width / 2, player.y + player.height / 2);
 
-            if (game.lives <= 0) {
-                gameOver();
-            } else {
-                updateUI();
+                if (game.lives <= 0) {
+                    gameOver();
+                } else {
+                    updateUI();
+                }
+            }
+        }
+    }
+
+    // Laser Collision (tödlicher als normale Hindernisse, außer im God Mode)
+    if (!game.godMode) {
+        for (let i = game.lasers.length - 1; i >= 0; i--) {
+            const laser = game.lasers[i];
+            if (isCollidingWithLaser(player, laser)) {
+                nyanDebug.log('COLLISION', 'INFO', 'LASER HIT! Nyan Cat wurde gegrillt!');
+                game.lives--;
+                createLaserHitParticles(player.x + player.width / 2, player.y + player.height / 2);
+
+                // Laser-Hit ist schwerwiegender - mehr Partikel
+                createExplosionParticles(player.x + player.width / 2, player.y + player.height / 2);
+
+                if (game.lives <= 0) {
+                    gameOver();
+                } else {
+                    updateUI();
+                }
+                break; // Nur ein Laser-Hit pro Frame
             }
         }
     }
@@ -1122,6 +1593,15 @@ function isColliding(rect1, rect2) {
         rect1.x + rect1.width > rect2.x &&
         rect1.y < rect2.y + rect2.height &&
         rect1.y + rect1.height > rect2.y;
+}
+
+function isCollidingWithLaser(player, laser) {
+    // Laser haben eine etwas kleinere Hitbox für faireres Gameplay
+    const margin = 3;
+    return player.x < laser.x + laser.width - margin &&
+        player.x + player.width > laser.x + margin &&
+        player.y < laser.y + laser.height - margin &&
+        player.y + player.height > laser.y + margin;
 }
 
 function createCollectParticles(x, y, color) {
@@ -1148,6 +1628,34 @@ function createExplosionParticles(x, y) {
             life: 1,
             color: '#ff4444',
             size: Math.random() * 6 + 3
+        });
+    }
+}
+
+function createLaserHitParticles(x, y) {
+    // Spezielle Laser-Hit Partikel (mehr und intensiver)
+    for (let i = 0; i < 25; i++) {
+        game.particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 15,
+            vy: (Math.random() - 0.5) * 15,
+            life: 1.5,
+            color: ['#ff0000', '#ff4444', '#ffaa00', '#ffffff'][Math.floor(Math.random() * 4)],
+            size: Math.random() * 8 + 4
+        });
+    }
+
+    // Zusätzliche Funken-Effekte
+    for (let i = 0; i < 10; i++) {
+        game.particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 20,
+            vy: (Math.random() - 0.5) * 20,
+            life: 0.8,
+            color: '#ffffff',
+            size: Math.random() * 3 + 1
         });
     }
 }
@@ -1196,6 +1704,12 @@ function render() {
 
     // Render Obstacles
     game.obstacles.forEach(obstacle => renderObstacle(obstacle));
+
+    // Render Laser Warnings (unter allem anderen)
+    game.laserWarnings.forEach(warning => renderLaserWarning(warning));
+
+    // Render Lasers (über Warnungen aber unter Player)
+    game.lasers.forEach(laser => renderLaser(laser));
 
     // Render Particles
     game.particles.forEach(particle => renderParticle(particle));
@@ -1331,7 +1845,7 @@ function closeGame() {
     game.isRunning = false;
     game.isPaused = false;
     document.getElementById('gameOverlay').classList.add('hidden');
-    console.log('🎮 Game geschlossen. Auf Wiedersehen!');
+    nyanDebug.log('GAME', 'INFO', 'Game geschlossen. Auf Wiedersehen!');
 }
 
 function gameOver() {
@@ -1347,7 +1861,7 @@ function gameOver() {
     document.getElementById('finalLevel').textContent = game.level;
     document.getElementById('gameOverScreen').classList.remove('hidden');
 
-    console.log(`🎮 Game Over! Final Score: ${game.score}, Level: ${game.level}`);
+    nyanDebug.log('GAME', 'INFO', `Game Over! Final Score: ${game.score}, Level: ${game.level}`);
 }
 
 function updateControlToggle() {
@@ -1390,6 +1904,91 @@ function renderStar(star) {
     ctx.beginPath();
     ctx.arc(0, 0, 10, 0, Math.PI * 2);
     ctx.fill();
+
+    ctx.restore();
+}
+
+function renderLaserWarning(warning) {
+    const ctx = game.ctx;
+
+    // Blink-Effekt basierend auf verbleibender Zeit
+    const timeRatio = warning.warningTime / warning.maxWarningTime;
+    const blinkSpeed = Math.max(0.2, timeRatio * 0.8); // Schneller blinken wenn Zeit abläuft
+    const alpha = (Math.sin(warning.blinkPhase * blinkSpeed) + 1) * 0.5;
+
+    // Farbe wird intensiver je näher der Laser kommt
+    const intensity = 1 - timeRatio;
+    const red = Math.floor(255 * (0.5 + intensity * 0.5));
+
+    ctx.save();
+    ctx.globalAlpha = alpha * (0.4 + intensity * 0.5);
+
+    // Nur horizontale Warnung - voller roter Strich
+    const gradient = ctx.createLinearGradient(0, warning.y, 0, warning.y + warning.height);
+    gradient.addColorStop(0, `rgba(${red}, 0, 0, 0.3)`);
+    gradient.addColorStop(0.5, `rgba(${red}, 0, 0, 1)`);
+    gradient.addColorStop(1, `rgba(${red}, 0, 0, 0.3)`);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, warning.y, game.canvas.width, warning.height);
+
+    // Zusätzliche Warnstreifen oben und unten
+    ctx.fillStyle = `rgba(255, 255, 0, ${alpha * 0.8})`;
+    ctx.fillRect(0, warning.y - 3, game.canvas.width, 3);
+    ctx.fillRect(0, warning.y + warning.height, game.canvas.width, 3);
+
+    // Zusätzlicher Glow-Effekt
+    ctx.shadowColor = '#ff0000';
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = `rgba(255, 0, 0, ${alpha * 0.3})`;
+    ctx.fillRect(0, warning.y - 5, game.canvas.width, warning.height + 10);
+
+    ctx.restore();
+}
+
+function renderLaser(laser) {
+    const ctx = game.ctx;
+
+    ctx.save();
+    ctx.globalAlpha = laser.intensity;
+
+    // Nur horizontaler Laser - voller roter Strich über komplette Breite
+    const gradient = ctx.createLinearGradient(0, laser.y, 0, laser.y + laser.height);
+    gradient.addColorStop(0, 'rgba(255, 0, 0, 0.2)');
+    gradient.addColorStop(0.3, 'rgba(255, 50, 50, 0.9)');
+    gradient.addColorStop(0.5, 'rgba(255, 255, 255, 1)'); // Weißer Kern
+    gradient.addColorStop(0.7, 'rgba(255, 50, 50, 0.9)');
+    gradient.addColorStop(1, 'rgba(255, 0, 0, 0.2)');
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, laser.y, game.canvas.width, laser.height);
+
+    // Intensiver Glow-Effekt über die komplette Breite
+    ctx.shadowColor = '#ff0000';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = `rgba(255, 0, 0, ${0.4 * laser.intensity})`;
+    ctx.fillRect(0, laser.y - 5, game.canvas.width, laser.height + 10);
+
+    // Zusätzliche helle Kernlinie
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.8 * laser.intensity})`;
+    ctx.fillRect(0, laser.y + laser.height / 2 - 1, game.canvas.width, 2);
+
+    // Laser-Partikel-Effekte über die gesamte Breite
+    if (Math.random() < 0.5) {
+        const sparkX = Math.random() * game.canvas.width;
+        const sparkY = laser.y + Math.random() * laser.height;
+
+        game.particles.push({
+            x: sparkX,
+            y: sparkY,
+            vx: (Math.random() - 0.5) * 6,
+            vy: (Math.random() - 0.5) * 6,
+            life: 0.6,
+            color: ['#ffffff', '#ff0000', '#ffaa00'][Math.floor(Math.random() * 3)],
+            size: Math.random() * 3 + 1
+        });
+    }
 
     ctx.restore();
 }
